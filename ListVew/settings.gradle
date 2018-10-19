@@ -1,0 +1,1 @@
+include 'ListViewBasicApp', 'CustomAdapterApp', 'CustomListViewApp1', 'CustomListViewApp2', 'SpinnerApp', 'TwoLineListViewApp', 'ViewPagerApp'
