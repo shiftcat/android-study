@@ -1,1 +1,1 @@
-include 'ListViewBasicApp', 'CustomAdapterApp', 'CustomListViewApp1', 'CustomListViewApp2', 'SpinnerApp', 'TwoLineListViewApp', 'ViewPagerApp'
+include 'ListViewBasicApp', 'CustomAdapterApp', 'CustomListView1App', 'CustomListView2App', 'SpinnerApp', 'TwoLineListViewApp', 'ViewPagerApp'

@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.yhlee.customactionbar"
+        applicationId "com.example.customactionbar"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1

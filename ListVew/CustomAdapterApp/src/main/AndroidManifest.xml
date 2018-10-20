@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.yhlee.customadapterex">
+    package="com.example.customadapter">
 
     <application
         android:allowBackup="true"
@@ -19,7 +19,7 @@ android:configChanges="orientation|screenSize"
 참고: http://mainia.tistory.com/4929
 
 -->
-        <activity android:name=".MainActivity" android:configChanges="orientation|screenSize">
+        <activity android:name="com.example.customadapter.MainActivity" android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

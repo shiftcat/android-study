@@ -1,0 +1,2 @@
+include ':ActivityControllerApp', ':ListFragmentApp'
+include 'FragmentBasicApp'

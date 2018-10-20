@@ -1,1 +1,1 @@
-include 'AppbarLayoutApp', 'AppbarLayoutApp2', 'AppbarLayoutApp3', 'FrameLayoutApp', 'NavigationDrawerApp', 'TabLayoutApp'
+include 'AppbarLayoutApp', 'AppbarLayout2App', 'AppbarLayout3App', 'FrameLayoutApp', 'NavigationDrawerApp', 'TabLayoutApp'

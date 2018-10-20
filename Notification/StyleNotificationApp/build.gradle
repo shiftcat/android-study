@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.yhlee.stylenotification"
+        applicationId "com.example.stylenotification"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1

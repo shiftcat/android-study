@@ -1,0 +1,1 @@
+include ':SensorBasicApp', ':AccelerationSensorApp', ':BrightnessSensorApp', ':GyroscopeSensorApp', ':MagneticSensorApp', ':CompassApp', ':PressureSensorApp', ':ProximitySensorApp'

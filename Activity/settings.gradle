@@ -1,1 +1,1 @@
-include ':ActiviyBasicApp', ':SendObjectApp', 'ActivityIntentApp', 'ActivityActionApp'
+include 'ActiviyBasicApp', 'SendObjectApp', 'ActivityIntentApp', 'ActivityActionApp'
