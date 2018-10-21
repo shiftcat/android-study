@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.example.cameraoriginal">
-
+    
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -9,7 +9,19 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name="com.example.cameraoriginal.MainActivity">
+
+        <!--
+    디바이스 회전시 액티비티의 생성주기가 다시 시작된다.
+    그로인하여 애플리케이션 상태가 초기화 되는 문제가 있다.
+    다음 옵션 지정하면 해결된다.
+
+    android:configChanges="orientation|screenSize"
+
+    참고: http://mainia.tistory.com/4929
+    -->
+        <activity
+                android:name="com.example.cameraoriginal.MainActivity"
+                android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

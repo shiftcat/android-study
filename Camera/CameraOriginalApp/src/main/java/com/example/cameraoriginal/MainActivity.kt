@@ -3,7 +3,10 @@ package com.example.cameraoriginal
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -38,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     var dirPath: String? = null
 
     var contentUri: Uri? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +100,39 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         var bitmap = BitmapFactory.decodeFile(contentUri?.path)
+        bitmap = resizeBitmap(1024, bitmap)
+
+        var degree = getDegree(contentUri?.path!!)
         imageView.setImageBitmap(bitmap)
+        imageView.rotation = degree
+    }
+
+
+    private fun resizeBitmap(targetWidth:Int, source: Bitmap): Bitmap {
+        var ratio = source.height.toDouble() / source.width.toDouble()
+        var targetHeight = (targetWidth * ratio).toInt()
+        var result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false)
+        if(result != source) {
+            source.recycle()
+        }
+        return result
+    }
+
+
+    private fun getDegree(imgPath: String): Float {
+        var exif = ExifInterface(imgPath)
+        var degree = 0
+        // 이미지의 회전 각도 (사진 정보에 회전 각도 정보가 없다면 디폴트값으로 지정한 -1값을 리턴한다.)
+        var ori = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)
+        if(ori > 0) {
+            degree = when(ori) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                else -> 0
+            }
+        }
+        return degree.toFloat()
     }
 
 }
