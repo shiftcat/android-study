@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         val deniedCount = grantResults.filter { it == PackageManager.PERMISSION_DENIED }.count()
         Log.d(LOG_TAG, "PERMISSION_DENIED ${deniedCount}")
         if(deniedCount > 0) {
-            Toast.makeText(this, "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
             return
         }
         else {
