@@ -1,1 +1,1 @@
-include ':CameraBasicApp', ':CameraOriginalApp'
+include ':CameraBasicApp', ':CameraOriginalApp', ':MyGalleryApp'
