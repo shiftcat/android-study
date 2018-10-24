@@ -1,6 +1,8 @@
 package com.example.osreceiverapp
 
 import android.Manifest
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -19,14 +21,19 @@ class MainActivity : AppCompatActivity() {
 
     private val permissionList = arrayOf(
         Manifest.permission.READ_PHONE_STATE,
-        Manifest.permission.RECEIVE_SMS
+        Manifest.permission.RECEIVE_SMS,
+        Manifest.permission.PROCESS_OUTGOING_CALLS,
+        Manifest.permission.READ_CALL_LOG
     )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         checkPermisstion()
+
+        addReceiver()
     }
 
 
@@ -43,6 +50,23 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(permissionList, 0)
         }
     }
+
+
+    private val myReceiver: MyReceiver by lazy {
+        MyReceiver()
+    }
+
+
+    private fun addReceiver() {
+        registerReceiver(myReceiver, IntentFilter(Intent.ACTION_SCREEN_ON))
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(myReceiver)
+    }
+
 
 
 }

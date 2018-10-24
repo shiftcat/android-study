@@ -42,7 +42,7 @@ class MyReceiver : BroadcastReceiver()
 
 ```
 
-인텐트 발생
+## 인텐트 발생
 
 1. 같은 앱에서 명시적 인텐트
 ```kotlin
@@ -103,4 +103,119 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+```
+
+## 시스템 브로드캐스트
+
+1. 부팅완료
+```xml
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+<receiver
+        android:name=".MyReceiver"
+        android:enabled="true"
+        android:exported="true">
+    <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+    </intent-filter>
+</receiver>
+```
+
+```kotlin
+override fun onReceive(context: Context, intent: Intent) {
+    when (intent.action) {
+        Intent.ACTION_BOOT_COMPLETED -> {
+            Toast.makeText(context, "부팅완료", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+```
+
+
+2. 문자수신
+
+```xml
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+<receiver
+        android:name=".MyReceiver"
+        android:enabled="true"
+        android:exported="true">
+    <intent-filter>
+        <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+    </intent-filter>
+</receiver>
+
+```
+```kotlin
+override fun onReceive(context: Context, intent: Intent) {
+    when (intent.action) {
+        Telephony.Sms.Intents.SMS_RECEIVED_ACTION -> {
+            var bundle = intent.extras
+            if (bundle != null) {
+                var obj = bundle.get("pdus") as Array<Any>
+                var msgs =
+                    obj.map {
+                            var sms = SmsMessage.createFromPdu(it as ByteArray)
+                            "From: ${sms.originatingAddress}, Message: ${sms.messageBody}"
+                        }
+                        .toList()
+
+                var msg = msgs.joinToString()
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
+```
+
+
+3. 전화 수신/발신
+- 안드로이드 9.0 에서 READ_CALL_LOG 권한이 추가 되어야 한다.
+
+```xml
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+<uses-permission android:name="android.permission.READ_CALL_LOG" />
+
+<receiver
+        android:name=".MyReceiver"
+        android:enabled="true"
+        android:exported="true">
+    <intent-filter>
+        <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+        <action android:name="android.intent.action.PHONE_STATE" />
+    </intent-filter>
+</receiver>
+```
+
+```kotlin
+override fun onReceive(context: Context, intent: Intent) {
+    when (intent.action) {
+        // 전화 발신
+        Intent.ACTION_NEW_OUTGOING_CALL -> {
+            val phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER)
+            Toast.makeText(context, "Phone Number: ${phoneNumber}", Toast.LENGTH_SHORT).show()
+        }
+        // 전화 수신
+        "android.intent.action.PHONE_STATE" -> {
+            val bundle = intent.extras
+            bundle.keySet().forEach {
+                Log.d("OSReceiver", "Bundle key : ${it} \n")
+            }
+            val state = bundle.getString(TelephonyManager.EXTRA_STATE)
+            val phoneNumber = bundle.getString(TelephonyManager.EXTRA_INCOMING_NUMBER)
+            Toast.makeText(context, "state: ${state}, Number: ${phoneNumber}", Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+```
+
+4. 화면 On/Off
+- 화면 On/Off를 위한 브로드캐스트 리시버는 AndroidManifest.xml 파일에 등록해도 실행되지 않는다.
+- registerReceiver() 함수로 등록해야 한다.
+
+```kotlin
+registerReceiver(myReceiver, IntentFilter(Intent.ACTION_SCREEN_ON))
 ```
