@@ -75,7 +75,9 @@ class MyAdaptor(realmResult: OrderedRealmCollection<Contact>) : RealmBaseAdapter
             checkBox?.isChecked = isCheckedConfirm[position]
 
             checkBox?.setOnCheckedChangeListener { buttonView, isChecked ->
-                isCheckedConfirm[position] = isChecked
+                if(isCheckedConfirm.size > position) {
+                    isCheckedConfirm[position] = isChecked
+                }
             }
         }
 
