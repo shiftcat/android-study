@@ -43,7 +43,7 @@ class EditActivity : AppCompatActivity() {
         btnOk.setOnClickListener {
             var intent = Intent()
             var newContact = ContactVO()
-            newContact.id = 0
+            newContact.id = if(contactId > -1) contactId else 0
             newContact.name = editName.text.toString()
             newContact.phone = editPhone.text.toString()
             newContact.email = editEmail.text.toString()
@@ -68,4 +68,9 @@ class EditActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mRealm.close()
+    }
 }

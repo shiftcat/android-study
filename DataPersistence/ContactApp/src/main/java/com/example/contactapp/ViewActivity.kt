@@ -152,5 +152,10 @@ class ViewActivity : AppCompatActivity() {
         builder.show()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mRealm.close()
+    }
+
 
 }
