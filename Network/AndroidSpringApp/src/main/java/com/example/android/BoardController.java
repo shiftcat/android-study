@@ -6,20 +6,24 @@ import com.example.android.board.vo.BoardForm;
 import com.example.android.board.vo.BoardSearch;
 import com.example.android.board.vo.BoardVO;
 import com.example.android.thumbnail.ThumbnailService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 public class BoardController {
 
@@ -80,11 +84,15 @@ public class BoardController {
 
 
     @PostMapping("/board")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> save(@ModelAttribute @Valid BoardForm boardForm) throws IOException {
         BoardVO boardVO = formToVO(boardForm);
         BoardVO savedBoard = boardService.save(boardVO);
-        return ResponseEntity.ok(savedBoard);
+        URI uri = ServletUriComponentsBuilder
+                    .fromCurrentRequestUri().path("/{id}")
+                    .buildAndExpand(savedBoard.getId())
+                    .toUri();
+        log.debug("Create new uri: {}", uri);
+        return ResponseEntity.created(uri).body(savedBoard);
     }
 
 
