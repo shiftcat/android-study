@@ -1,0 +1,50 @@
+server:
+    port: 8080
+
+debug: true
+
+logging:
+    level:
+        root: INFO
+        com.example.android: DEBUG
+        org.springframework.web: DEBUG
+        org.springframework.transaction: DEBUG
+        org.springframework.orm.jpa: DEBUG
+        org.springframework.transaction.interceptor: TRACE
+        org.hibernate.type.descriptor.sql: TRACE
+
+
+#    spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults = false
+#    spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect
+
+# java.sql.SQLFeatureNotSupportedException: Method org.postgresql.jdbc.PgConnection.createClob() is not yet implemented.
+#    spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+
+
+spring:
+    servlet:
+        multipart:
+            max-file-size: 5MB
+            max-request-size: 5MB
+    datasource:
+        url: jdbc:postgresql://localhost:5432/dev_db
+        #platform: postgres
+        driver-class-name: org.postgresql.Driver
+        username: dev_user
+        password: roqkf1!4$pw
+    jpa:
+        database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                show_sql: true
+                format_sql: true
+                use_sql_comments: true
+                jdbc:
+                    lob:
+                        non_contextual_creation: true
+                use_jdbc_metadata_defaults: false
+
+
+
