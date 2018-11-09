@@ -103,17 +103,17 @@ public class FileServiceImpl implements FileService {
             return res.get();
         }
 
-        AttachedFile attachedFile = toAttachedFile(fileBytes);
+        AttachedFile newAttachedFile = toAttachedFile(fileBytes);
 
-        makeSubdir(Constant.UPLOAD_DIR + attachedFile.getSubdirPath());
-        File dest = new File(Constant.UPLOAD_DIR + attachedFile.getSubdirPath() + File.separator + attachedFile.getChangedName());
+        makeSubdir(Constant.UPLOAD_DIR + newAttachedFile.getSubdirPath());
+        File dest = new File(Constant.UPLOAD_DIR + newAttachedFile.getSubdirPath() + File.separator + newAttachedFile.getChangedName());
         FileUtils.writeByteArrayToFile(dest, fileBytes.getBytes());
         log.debug("File write complete: {}", dest);
 
-        AttachedFile saved = repository.save(attachedFile);
-        log.debug("File info save complete: {}", attachedFile);
+        AttachedFile resAttachedFile = repository.save(newAttachedFile);
+        log.debug("File info save complete: {}", newAttachedFile);
 
-        return saved;
+        return resAttachedFile;
     }
 
 

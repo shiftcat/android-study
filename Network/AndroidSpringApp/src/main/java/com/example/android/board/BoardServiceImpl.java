@@ -104,18 +104,18 @@ public class BoardServiceImpl implements BoardService {
             attachedFiles = new ArrayList<>();
         }
 
-        Board board = new Board();
-        board.setWirter(boardVO.getWriter());
-        board.setSubject(boardVO.getSubject());
-        board.setContent(boardVO.getContent());
-        board.setAttachedFiles(attachedFiles);
-        board.setFileCount(attachedFiles.size());
-        board.setThumbnailImage(thumbnailImage);
+        Board newBoard = new Board();
+        newBoard.setWirter(boardVO.getWriter());
+        newBoard.setSubject(boardVO.getSubject());
+        newBoard.setContent(boardVO.getContent());
+        newBoard.setAttachedFiles(attachedFiles);
+        newBoard.setFileCount(attachedFiles.size());
+        newBoard.setThumbnailImage(thumbnailImage);
 
-        Board newBoard = repository.save(board);
-        boardVO.setId(newBoard.getId());
+        Board resBoard = repository.save(newBoard);
+        boardVO.setId(resBoard.getId());
         boardVO.setFiles(fileModelToVO(attachedFiles));
-        boardVO.setThumbnail(thumbnailToVO(board.getThumbnailImage()));
+        boardVO.setThumbnail(thumbnailToVO(newBoard.getThumbnailImage()));
         return boardVO;
     }
 
@@ -206,11 +206,14 @@ public class BoardServiceImpl implements BoardService {
 
     private FileBytes thumbnailToVO(ThumbnailImage thumbnailImage)
     {
-        FileBytes fileBytes = new FileBytes();
-        fileBytes.setId(thumbnailImage.getId());
-        fileBytes.setFileName(thumbnailImage.getOriginalName());
-        fileBytes.setSize(thumbnailImage.getSize());
-        return fileBytes;
+        if(thumbnailImage != null) {
+            FileBytes fileBytes = new FileBytes();
+            fileBytes.setId(thumbnailImage.getId());
+            fileBytes.setFileName(thumbnailImage.getOriginalName());
+            fileBytes.setSize(thumbnailImage.getSize());
+            return fileBytes;
+        }
+        return null;
     }
 
 

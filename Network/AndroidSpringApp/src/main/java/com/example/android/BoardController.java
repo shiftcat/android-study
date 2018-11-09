@@ -85,14 +85,14 @@ public class BoardController {
 
     @PostMapping("/board")
     public ResponseEntity<?> save(@ModelAttribute @Valid BoardForm boardForm) throws IOException {
-        BoardVO boardVO = formToVO(boardForm);
-        BoardVO savedBoard = boardService.save(boardVO);
+        BoardVO newBoard = formToVO(boardForm);
+        BoardVO resBoard = boardService.save(newBoard);
         URI uri = ServletUriComponentsBuilder
                     .fromCurrentRequestUri().path("/{id}")
-                    .buildAndExpand(savedBoard.getId())
+                    .buildAndExpand(resBoard.getId())
                     .toUri();
         log.debug("Create new uri: {}", uri);
-        return ResponseEntity.created(uri).body(savedBoard);
+        return ResponseEntity.created(uri).body(resBoard);
     }
 
 
@@ -101,8 +101,8 @@ public class BoardController {
                                     @ModelAttribute @Valid BoardForm boardForm) throws IOException {
         BoardVO boardVO = formToVO(boardForm);
         boardVO.setId(id);
-        BoardVO savedBoard = boardService.update(boardVO);
-        return ResponseEntity.ok(savedBoard);
+        BoardVO resBoard = boardService.update(boardVO);
+        return ResponseEntity.ok(resBoard);
     }
 
 
