@@ -3,8 +3,9 @@ package com.example.android;
 import com.example.android.attchedfile.vo.FileBytes;
 import com.example.android.board.*;
 import com.example.android.board.vo.BoardForm;
+import com.example.android.board.vo.BoardResponse;
 import com.example.android.board.vo.BoardSearch;
-import com.example.android.board.vo.BoardVO;
+import com.example.android.board.vo.BoardRequest;
 import com.example.android.thumbnail.ThumbnailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class BoardController {
     }
 
 
-    private BoardVO formToVO(BoardForm boardForm)
+    private BoardRequest formToRequest(BoardForm boardForm)
     {
         MultipartFile[] files = boardForm.getFiles();
 
@@ -74,19 +75,19 @@ public class BoardController {
             fileBytes = Arrays.asList();
         }
 
-        BoardVO boardVO = new BoardVO();
-        boardVO.setWriter(boardForm.getWriter());
-        boardVO.setSubject(boardForm.getSubject());
-        boardVO.setContent(boardForm.getContent());
-        boardVO.setFiles(fileBytes);
-        return boardVO;
+        BoardRequest boardRequest = new BoardRequest();
+        boardRequest.setWriter(boardForm.getWriter());
+        boardRequest.setSubject(boardForm.getSubject());
+        boardRequest.setContent(boardForm.getContent());
+        boardRequest.setFiles(fileBytes);
+        return boardRequest;
     }
 
 
     @PostMapping("/board")
     public ResponseEntity<?> save(@ModelAttribute @Valid BoardForm boardForm) throws IOException {
-        BoardVO newBoard = formToVO(boardForm);
-        BoardVO resBoard = boardService.save(newBoard);
+        BoardRequest newBoard = formToRequest(boardForm);
+        BoardResponse resBoard = boardService.save(newBoard);
         URI uri = ServletUriComponentsBuilder
                     .fromCurrentRequestUri().path("/{id}")
                     .buildAndExpand(resBoard.getId())
@@ -99,9 +100,9 @@ public class BoardController {
     @PutMapping("/board/{id}")
     public ResponseEntity<?> update(@PathVariable Long id,
                                     @ModelAttribute @Valid BoardForm boardForm) throws IOException {
-        BoardVO boardVO = formToVO(boardForm);
-        boardVO.setId(id);
-        BoardVO resBoard = boardService.update(boardVO);
+        BoardRequest boardRequest = formToRequest(boardForm);
+        boardRequest.setId(id);
+        BoardResponse resBoard = boardService.update(boardRequest);
         return ResponseEntity.ok(resBoard);
     }
 
@@ -119,15 +120,15 @@ public class BoardController {
     @GetMapping("/board/{id}")
     public ResponseEntity<?> findOne(@PathVariable Long id)
     {
-        BoardVO boardVO = boardService.findOne(id);
-        return ResponseEntity.ok(boardVO);
+        BoardResponse boardRequest = boardService.findOne(id);
+        return ResponseEntity.ok(boardRequest);
     }
 
 
     @GetMapping("/board/search")
     public ResponseEntity<?> search(@ModelAttribute BoardSearch searchVO)
     {
-        List<BoardVO> boards = boardService.search(searchVO);
+        List<BoardResponse> boards = boardService.search(searchVO);
         return ResponseEntity.ok(boards);
     }
 

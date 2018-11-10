@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class BoardVO
+public class BoardRequest
 {
 
     private Long id;
@@ -18,7 +18,5 @@ public class BoardVO
     private String content;
 
     private List<FileBytes> files;
-
-    private FileBytes thumbnail;
 
 }

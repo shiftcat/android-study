@@ -24,11 +24,7 @@ public class BoardRepository {
     public Board save(Board board)
     {
         em.persist(board);
-        Board newBoard = new Board();
-        newBoard.setId(board.getId());
-        newBoard.setSubject(board.getSubject());
-        newBoard.setContent(board.getContent());
-        return newBoard;
+        return board;
     }
 
 
@@ -40,7 +36,7 @@ public class BoardRepository {
 
     public List<Board> findAllBy(Pageable pageable)
     {
-        String query = "SELECT b FROM Board b LEFT JOIN FETCH b.thumbnailImage ORDER BY b.id";
+        String query = "SELECT b FROM Board b LEFT JOIN FETCH b.thumbnailImage ORDER BY b.id DESC";
 
         return em.createQuery(query)
                 .setFirstResult((int)pageable.getOffset())
@@ -51,7 +47,7 @@ public class BoardRepository {
 
     public List<Board> findBySubjectLike(String subject, Pageable pageable)
     {
-        String query = "SELECT b FROM Board b LEFT JOIN FETCH b.thumbnailImage WHERE b.subject LIKE :subject ORDER BY b.id";
+        String query = "SELECT b FROM Board b LEFT JOIN FETCH b.thumbnailImage WHERE b.subject LIKE :subject ORDER BY b.id DESC";
 
         return em.createQuery(query)
                 .setParameter("subject", subject)
