@@ -1,8 +1,8 @@
 package com.example.android.board;
 
+import com.example.android.board.vo.BoardRequest;
 import com.example.android.board.vo.BoardResponse;
 import com.example.android.board.vo.BoardSearch;
-import com.example.android.board.vo.BoardRequest;
 
 import java.io.IOException;
 import java.util.List;

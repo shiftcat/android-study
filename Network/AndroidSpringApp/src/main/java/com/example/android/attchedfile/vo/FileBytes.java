@@ -1,7 +1,6 @@
 package com.example.android.attchedfile.vo;
 
 import com.example.android.models.AttachedFile;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
@@ -14,11 +13,10 @@ public class FileBytes
 
     private Long size;
 
+    private Integer ord;
 
-    @JsonIgnore
     private byte[] bytes;
 
-    @JsonIgnore
     private AttachedFile attachedFile;
 
 }

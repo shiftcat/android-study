@@ -15,26 +15,14 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class ThumbnailImage
+public class ThumbnailImage extends FileEntity
 {
     @Id
     @Column(name = "ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_THUMB_IMG_GENE")
     private Long id;
 
-    @Column(name = "ORIGIN_NM", nullable = false, length = 300)
-    private String originalName;
-
-    @Column(name = "CHGED_NM", nullable = false, length = 150)
-    private String changedName;
-
-    @Column(name = "SUBDIR", nullable = false, length = 150)
-    private String subdirPath;
-
-    @Column(name = "SIZE", nullable = false)
-    private Long size;
-
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ORIGIN_FILE_ID", nullable = false)
     private AttachedFile originalFile;
 

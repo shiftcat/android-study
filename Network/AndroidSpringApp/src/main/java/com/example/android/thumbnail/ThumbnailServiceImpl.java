@@ -5,15 +5,13 @@ import com.example.android.attchedfile.FileService;
 import com.example.android.attchedfile.vo.FileBytes;
 import com.example.android.attchedfile.vo.FileSearch;
 import com.example.android.models.ThumbnailImage;
+import com.example.android.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnails;
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,63 +31,11 @@ public class ThumbnailServiceImpl implements ThumbnailService
     }
 
 
-    private String rename(String name)
-    {
-        int lastidx = name.lastIndexOf(".");
-        UUID uuid = UUID.randomUUID();
-        String renamed = null;
-        if(lastidx > -1) {
-            //String ext = name.substring(lastidx+1, name.length());
-            //renamed = uuid.toString() + "." + ext;
-            // Thumbnails 라이브러이에서 확장자가 png가 아니면 추가로 png 확장자가 붙음.
-            renamed = uuid.toString() + ".png";
-        }
-        else {
-            renamed = uuid.toString();
-        }
-
-        log.debug("File rename {} -> {}", name, renamed);
-        return renamed;
-    }
-
-
-
-    private String getSubdirPath()
-    {
-        Calendar cal = new GregorianCalendar();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH)+1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-
-        return File.separator + year + File.separator + month + File.separator + day;
-    }
-
-
-    private void makeSubdir(String path)
-    {
-        File sub = new File(path);
-        if(!sub.exists()) {
-            sub.mkdirs();
-            log.debug("Make subdir: {}", path);
-        }
-    }
-
-
-    private FileBytes fileModelToBytes(ThumbnailImage thumbnailImage)
-    {
-        FileBytes fileBytes = new FileBytes();
-        fileBytes.setFileName(thumbnailImage.getOriginalName());
-        fileBytes.setSize(thumbnailImage.getSize());
-        fileBytes.setId(thumbnailImage.getId());
-        return fileBytes;
-    }
-
-
     private ThumbnailImage toAttachedFile(FileBytes fileBytes)
     {
         String originalName = fileBytes.getFileName();
-        String changedName = rename(originalName);
-        String subdirPath = getSubdirPath();
+        String changedName = FileUtils.rename(originalName);
+        String subdirPath = FileUtils.getSubdirPath();
 
         ThumbnailImage thumbnailImage = new ThumbnailImage();
         thumbnailImage.setOriginalName(originalName);
@@ -105,17 +51,13 @@ public class ThumbnailServiceImpl implements ThumbnailService
     public ThumbnailImage save(FileBytes fileBytes) throws IOException
     {
         ThumbnailImage thumbnailImage = toAttachedFile(fileBytes);
-        makeSubdir(Constant.THUMBNAIL_DIR + thumbnailImage.getSubdirPath());
-        File dest =
-                new File(Constant.THUMBNAIL_DIR + thumbnailImage.getSubdirPath() + File.separator
-                        + thumbnailImage.getChangedName());
 
-        Thumbnails.of(new ByteArrayInputStream(fileBytes.getBytes()))
-                .size(190, 150).outputFormat("png").toFile(dest);
+        ThumbnailImage resThumb = repository.save(thumbnailImage);
 
-        log.debug("Thumbnail image write complete: {}", dest);
+        FileUtils.thumbnailWrite(Constant.THUMBNAIL_DIR, fileBytes, thumbnailImage);
+        log.debug("Thumbnail image write complete: {}", thumbnailImage.getOriginalFile());
 
-        return repository.save(thumbnailImage);
+        return resThumb;
     }
 
 
@@ -123,12 +65,8 @@ public class ThumbnailServiceImpl implements ThumbnailService
     public void delete(Long id) {
         Optional<ThumbnailImage> res = repository.findById(id);
         ThumbnailImage thumbnailImage = res.orElseThrow(() -> new RuntimeException("Not found."));
-        File file = new File(Constant.THUMBNAIL_DIR + thumbnailImage.getSubdirPath() + File.separator + thumbnailImage.getChangedName());
-        if(file.exists()) {
-            log.debug("Thumbnail delete complete: {}", file);
-            file.delete();
-        }
         repository.deleteById(id);
+        FileUtils.delete(Constant.THUMBNAIL_DIR, thumbnailImage);
     }
 
 
@@ -143,10 +81,9 @@ public class ThumbnailServiceImpl implements ThumbnailService
         Optional<ThumbnailImage> res = repository.findById(id);
         ThumbnailImage img = res.orElseThrow(() -> new RuntimeException("Not found."));
 
-        File file = new File(Constant.THUMBNAIL_DIR + img.getSubdirPath() + File.separator + img.getChangedName());
-        byte[] fileBytesArray = FileUtils.readFileToByteArray(file);
+        byte[] fileBytesArray = FileUtils.fileRead(Constant.THUMBNAIL_DIR, img);
 
-        FileBytes fileBytes = fileModelToBytes(img);
+        FileBytes fileBytes = FileUtils.toFileBytes(img, img.getId());
         fileBytes.setBytes(fileBytesArray);
         return fileBytes;
     }

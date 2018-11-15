@@ -63,10 +63,13 @@ public class BoardController {
 
         List<FileBytes> fileBytes = null;
         if(files != null && files.length > 0) {
+            final int[] idx = {0};
             fileBytes = Arrays.stream(files)
                     .map(
                             wrap(f -> {
-                                return multipartFileToRequest(f);
+                                FileBytes fb = multipartFileToRequest(f);
+                                fb.setOrd(idx[0]++);
+                                return fb;
                             })
                     )
                     .collect(Collectors.toList());

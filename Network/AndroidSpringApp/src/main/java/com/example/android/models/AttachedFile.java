@@ -16,28 +16,19 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class AttachedFile
+public class AttachedFile extends FileEntity
 {
     @Id
     @Column(name = "ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ_ATT_FILE_GENE")
     private Long id;
 
-    @Column(name = "ORIGIN_NM", nullable = false, length = 300)
-    private String originalName;
-
-    @Column(name = "CHGED_NM", nullable = false, length = 150)
-    private String changedName;
-
-    @Column(name = "SUBDIR", nullable = false, length = 150)
-    private String subdirPath;
-
     @Column(length = 15)
     @Enumerated(EnumType.STRING)
     private FileType fileType;
 
-    @Column(name = "SIZE", nullable = false)
-    private Long size;
+    @Column(name = "ord")
+    private Integer ord;
 
     @CreationTimestamp
     private Timestamp insDate;

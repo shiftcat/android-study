@@ -2,15 +2,15 @@ package com.example.android.board;
 
 
 import com.example.android.ExceptionFunction;
+import com.example.android.attchedfile.FileService;
 import com.example.android.attchedfile.FileType;
 import com.example.android.attchedfile.vo.FileBytes;
 import com.example.android.attchedfile.vo.FileResponse;
+import com.example.android.board.vo.BoardRequest;
 import com.example.android.board.vo.BoardResponse;
 import com.example.android.board.vo.BoardSearch;
-import com.example.android.board.vo.BoardRequest;
-import com.example.android.models.Board;
 import com.example.android.models.AttachedFile;
-import com.example.android.attchedfile.FileService;
+import com.example.android.models.Board;
 import com.example.android.models.ThumbnailImage;
 import com.example.android.thumbnail.ThumbnailService;
 import com.example.android.thumbnail.vo.ThumbnailResponse;
@@ -46,6 +46,7 @@ public class BoardServiceImpl implements BoardService {
         this.fileService = fileService;
         this.thumbnailService = thumbnailService;
     }
+
 
     private <T, R> Function<T, R> wrap(ExceptionFunction<T, R> f) {
         return (T r) -> {
@@ -96,27 +97,6 @@ public class BoardServiceImpl implements BoardService {
 
 
 
-    private List<FileResponse> fileModelToResponse(List<AttachedFile> attachedFiles) {
-        List<FileResponse> result = null;
-
-        if (!CollectionUtils.isEmpty(attachedFiles)) {
-            result = attachedFiles.stream()
-                    .map(af -> {
-                        FileResponse fileResponse = new FileResponse();
-                        fileResponse.setId(af.getId());
-                        fileResponse.setSize(af.getSize());
-                        fileResponse.setType(af.getFileType().toString());
-                        fileResponse.setName(af.getOriginalName());
-                        return fileResponse;
-                    })
-                    .collect(Collectors.toList());
-        } else {
-            result = new ArrayList<>();
-        }
-        return result;
-    }
-
-
     private ThumbnailResponse thumbnailToResponse(ThumbnailImage thumbnailImage)
     {
         if(thumbnailImage != null) {
@@ -134,15 +114,12 @@ public class BoardServiceImpl implements BoardService {
 
     private BoardResponse boardModelToResponse(Board board)
     {
-        List<AttachedFile> attachedFiles = board.getAttachedFiles();
-        List<FileResponse> frs = fileModelToResponse(attachedFiles);
-
         BoardResponse boardResponse = new BoardResponse();
         boardResponse.setId(board.getId());
         boardResponse.setWriter(board.getWirter());
         boardResponse.setSubject(board.getSubject());
         boardResponse.setContent(board.getContent());
-        boardResponse.setFiles(frs);
+        boardResponse.setFileCount(board.getFileCount());
         if(board.getThumbnailImage() != null) {
             boardResponse.setThumbnail(thumbnailToResponse(board.getThumbnailImage()));
         }
@@ -173,7 +150,9 @@ public class BoardServiceImpl implements BoardService {
         newBoard.setThumbnailImage(thumbnailImage);
 
         Board resBoard = repository.save(newBoard);
-        return boardModelToResponse(resBoard);
+        BoardResponse response = boardModelToResponse(resBoard);
+        response.setFiles(fileModelToResponse(resBoard.getAttachedFiles()));
+        return response;
     }
 
 
@@ -223,8 +202,9 @@ public class BoardServiceImpl implements BoardService {
         if (existingThumnail != null) {
             thumbnailService.delete(existingThumnail.getId());
         }
-
-        return boardModelToResponse(existingBoard);
+        BoardResponse response = boardModelToResponse(existingBoard);
+        response.setFiles(fileModelToResponse(existingBoard.getAttachedFiles()));
+        return response;
     }
 
 
@@ -244,10 +224,29 @@ public class BoardServiceImpl implements BoardService {
         }
 
         return boards.stream()
-                .map(b -> {
-                    return boardModelToResponse(b);
-                })
-                .collect(Collectors.toList());
+                    .map(b -> boardModelToResponse(b))
+                    .collect(Collectors.toList());
+    }
+
+
+    private List<FileResponse> fileModelToResponse(List<AttachedFile> attachedFiles) {
+        List<FileResponse> result = null;
+
+        if (!CollectionUtils.isEmpty(attachedFiles)) {
+            result = attachedFiles.stream()
+                    .map(af -> {
+                        FileResponse fileResponse = new FileResponse();
+                        fileResponse.setId(af.getId());
+                        fileResponse.setSize(af.getSize());
+                        fileResponse.setType(af.getFileType().toString());
+                        fileResponse.setName(af.getOriginalName());
+                        return fileResponse;
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            result = new ArrayList<>();
+        }
+        return result;
     }
 
 
@@ -255,7 +254,10 @@ public class BoardServiceImpl implements BoardService {
     {
         Optional<Board> res = repository.findOne(id);
         res.orElseThrow(() -> new RuntimeException("Board content not found."));
-        return boardModelToResponse(res.get());
+        Board board = res.get();
+        BoardResponse response = boardModelToResponse(board);
+        response.setFiles(fileModelToResponse(board.getAttachedFiles()));
+        return response;
     }
 
 

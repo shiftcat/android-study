@@ -37,6 +37,7 @@ public class Board
     @JoinTable(name = "BOARD_ATT_FILE", schema = "public",
             joinColumns = @JoinColumn(name = "BOARD_ID"),
             inverseJoinColumns = @JoinColumn(name = "FILE_ID"))
+    @OrderBy(value = "ord asc")
     private List<AttachedFile> attachedFiles;
 
 
