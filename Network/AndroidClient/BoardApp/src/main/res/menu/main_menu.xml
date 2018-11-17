@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Item" android:id="@+id/mnWrite" android:icon="@android:drawable/ic_menu_edit"
+          app:showAsAction="always"/>
+    <item android:title="Item" android:id="@+id/mnReload" android:icon="@drawable/ic_refresh_black_24dp"
+          app:showAsAction="always"/>
+</menu>
