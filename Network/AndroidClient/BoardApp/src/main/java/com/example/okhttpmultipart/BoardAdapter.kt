@@ -245,7 +245,7 @@ class BoardAdapter(val context: Context, val boardList: MutableList<BoardItemBas
         val layoutInflater = LayoutInflater.from(parent.context)
         when(type) {
             0 -> {
-                return ViewContentHolder(layoutInflater.inflate(R.layout.board_item_load, parent, false), this)
+                return ViewItemLoadHolder(layoutInflater.inflate(R.layout.board_item_load, parent, false))
             }
 
             1 -> {
@@ -270,11 +270,11 @@ class BoardAdapter(val context: Context, val boardList: MutableList<BoardItemBas
 
         if (isMoreLoading && onLoadMoreListener != null) {
             isMoreLoading = false
-            Handler().post {
-                boardList.add(BoardItemLoad(-1))
-                notifyItemInserted(boardList.size - 1)
-                onLoadMoreListener!!.onLoadMore()
-            }
+//            Handler().post {
+//            }
+            boardList.add(BoardItemLoad(-1))
+            notifyItemInserted(boardList.size - 1)
+            onLoadMoreListener!!.onLoadMore()
         }
         return boardList.size -1
     }
