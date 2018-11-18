@@ -144,20 +144,18 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
 
     private fun initForReload() {
-        mDataLoadLock = false
         val beforSize = mBoardItemList.size
         mBoardItemList.clear()
         mBoardAdapter.notifyItemRangeRemoved(0, beforSize)
         mPage = 0
     }
 
-    
+
     private fun reload() {
-        if(mDataLoadLock) {
-            initForReload()
-            mBoardClient.findBoardAll(::boardSearchCallback, mPage)
-        }
+        initForReload()
+        mBoardClient.findBoardAll(::boardSearchCallback, mPage)
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
