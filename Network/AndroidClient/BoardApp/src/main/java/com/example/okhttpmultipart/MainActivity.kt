@@ -118,13 +118,9 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, 
     }
 
 
-
-    /*
-        SwipeRefreshLayout.OnRefreshListener 구현
-         */
+    // SwipeRefreshLayout.OnRefreshListener 구현
     override fun onRefresh() {
-        initForReload()
-        mBoardClient.findBoardAll(::boardSearchCallback, mPage)
+        reload()
     }
 
 
@@ -135,6 +131,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, 
         }
         init()
     }
+
 
     private fun init() {
         val tempPath = Environment.getExternalStorageDirectory()
@@ -147,12 +144,20 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, 
 
 
     private fun initForReload() {
+        mDataLoadLock = false
         val beforSize = mBoardItemList.size
         mBoardItemList.clear()
         mBoardAdapter.notifyItemRangeRemoved(0, beforSize)
         mPage = 0
     }
 
+    
+    private fun reload() {
+        if(mDataLoadLock) {
+            initForReload()
+            mBoardClient.findBoardAll(::boardSearchCallback, mPage)
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -168,8 +173,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, 
             }
 
             R.id.mnReload -> {
-                initForReload()
-                mBoardClient.findBoardAll(::boardSearchCallback, mPage)
+                reload()
             }
         }
         return super.onOptionsItemSelected(item)
