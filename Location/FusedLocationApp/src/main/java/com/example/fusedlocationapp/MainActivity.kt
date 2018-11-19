@@ -55,7 +55,9 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
 
 
         button.setOnClickListener {
-            mApiClient.connect()
+            if(!mApiClient.isConnected) {
+                mApiClient.connect()
+            }
         }
 
     }
@@ -97,8 +99,10 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
 
     override fun onStop() {
         super.onStop()
-        mProviderApi.removeLocationUpdates(mApiClient, mLocationListener)
-        mApiClient.disconnect()
+        if(mApiClient.isConnected) {
+            mProviderApi.removeLocationUpdates(mApiClient, mLocationListener)
+            mApiClient.disconnect()
+        }
     }
 
 
