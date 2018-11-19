@@ -1,1 +1,1 @@
-include ':ContactApp'
+include ':ContactApp', ':ContactConsumerApp'

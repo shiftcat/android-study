@@ -58,8 +58,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initTestData()
-
         mAdapterData = mContactDAO.findAll()
         mAdapter = MyAdaptor(this, mAdapterData!!)
 
@@ -200,6 +198,10 @@ class MainActivity : AppCompatActivity() {
                 else {
                     Toast.makeText(this, "선택된 연락처가 없습니다.", Toast.LENGTH_SHORT).show()
                 }
+            }
+
+            R.id.btnRenew -> {
+                initTestData()
             }
         }
         return super.onOptionsItemSelected(item)

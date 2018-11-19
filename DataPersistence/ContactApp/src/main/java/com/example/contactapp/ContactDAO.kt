@@ -1,5 +1,7 @@
 package com.example.contactapp
 
+import android.database.Cursor
+import android.database.MatrixCursor
 import android.util.Log
 import io.realm.Realm
 import io.realm.RealmResults
@@ -99,5 +101,17 @@ class ContactDAO(realm: Realm) {
     }
 
 
+    fun findAllForProvider(): Cursor {
+        return exec {
+            val myCursor = MatrixCursor(arrayOf("id", "name", "phone", "email"))
+
+            val result = mRealm.where<Contact>().findAll().sort("name", Sort.ASCENDING)
+            result.forEach {
+                val row = arrayOf(it.id, it.name, it.phone, it.email)
+                myCursor.addRow(row)
+            }
+            myCursor
+        } as Cursor
+    }
 
 }
