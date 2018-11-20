@@ -1,0 +1,7 @@
+/*
+ 구글 개발자 사이트에서 API Key를 발급 받아 입력 한다.
+ 이 파일의 확장자를 txt -> xml 로 변경한다.
+*/
+<resources>
+    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">YOUR_API_KEY</string>
+</resources>
