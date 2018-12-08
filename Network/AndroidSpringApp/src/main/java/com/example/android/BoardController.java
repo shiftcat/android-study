@@ -128,10 +128,22 @@ public class BoardController {
     }
 
 
+    void randomDelay(float min, float max)
+    {
+        int random = (int)(max * Math.random() + min);
+        try {
+            Thread.sleep(random * 500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @GetMapping("/board/search")
     public ResponseEntity<?> search(@ModelAttribute BoardSearch searchVO)
     {
         List<BoardResponse> boards = boardService.search(searchVO);
+        randomDelay(0, 3);
         return ResponseEntity.ok(boards);
     }
 

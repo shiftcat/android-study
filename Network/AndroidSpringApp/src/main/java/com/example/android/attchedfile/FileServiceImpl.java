@@ -4,6 +4,7 @@ import com.example.android.Constant;
 import com.example.android.attchedfile.vo.FileBytes;
 import com.example.android.attchedfile.vo.FileSearch;
 import com.example.android.models.AttachedFile;
+import com.example.android.utils.FileProperties;
 import com.example.android.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -22,10 +23,13 @@ public class FileServiceImpl implements FileService {
 
     private FileRepository repository;
 
+    private FileProperties properties;
 
-    public FileServiceImpl(FileRepository repository)
+
+    public FileServiceImpl(FileRepository repository, FileProperties properties)
     {
         this.repository = repository;
+        this.properties = properties;
     }
 
 
@@ -51,7 +55,7 @@ public class FileServiceImpl implements FileService {
 
         Optional<AttachedFile> res = repository.findTop1ByOriginalNameAndSize(fileBytes.getFileName(), fileBytes.getSize());
         if(res.isPresent()) {
-            if(FileUtils.exists(Constant.UPLOAD_DIR, res.get())) {
+            if(FileUtils.exists(properties.getUploadDir(), res.get())) {
                 return res.get();
             }
         }
@@ -61,7 +65,7 @@ public class FileServiceImpl implements FileService {
         AttachedFile resAttachedFile = repository.save(newAttachedFile);
         log.debug("File info save complete: {}", newAttachedFile);
 
-        FileUtils.fileWrite(Constant.UPLOAD_DIR, fileBytes, newAttachedFile);
+        FileUtils.fileWrite(properties.getUploadDir(), fileBytes, newAttachedFile);
         log.debug("File write complete: {}", newAttachedFile.getOriginalName());
 
         return resAttachedFile;
@@ -73,7 +77,7 @@ public class FileServiceImpl implements FileService {
         Optional<AttachedFile> res = repository.findById(id);
         AttachedFile attachedFile = res.orElseThrow(() -> new RuntimeException("Not found."));
         repository.deleteById(id);
-        FileUtils.delete(Constant.UPLOAD_DIR, attachedFile);
+        FileUtils.delete(properties.getUploadDir(), attachedFile);
     }
 
 
@@ -81,7 +85,7 @@ public class FileServiceImpl implements FileService {
     public AttachedFile update(FileBytes fileBytes) throws IOException {
         Optional<AttachedFile> res = repository.findById(fileBytes.getId());
         AttachedFile existingFile = res.orElseThrow(() -> new RuntimeException("Not found."));
-        FileUtils.delete(Constant.UPLOAD_DIR, existingFile);
+        FileUtils.delete(properties.getUploadDir(), existingFile);
 
         String originalName = fileBytes.getFileName();
         String changedName = FileUtils.rename(originalName);
@@ -94,7 +98,7 @@ public class FileServiceImpl implements FileService {
         existingFile.setFileType(FileType.getFileType(originalName));
         /* update */
 
-        FileUtils.fileWrite(Constant.UPLOAD_DIR, fileBytes, existingFile);
+        FileUtils.fileWrite(properties.getUploadDir(), fileBytes, existingFile);
 
         return existingFile;
     }
@@ -105,7 +109,7 @@ public class FileServiceImpl implements FileService {
         Optional<AttachedFile> res = repository.findById(id);
         AttachedFile attachedFile = res.orElseThrow(() -> new RuntimeException("Not found."));
 
-        byte[] fileBytesArray = FileUtils.fileRead(Constant.UPLOAD_DIR, attachedFile);
+        byte[] fileBytesArray = FileUtils.fileRead(properties.getUploadDir(), attachedFile);
 
         FileBytes fileBytes = FileUtils.toFileBytes(attachedFile, attachedFile.getId());
         fileBytes.setBytes(fileBytesArray);

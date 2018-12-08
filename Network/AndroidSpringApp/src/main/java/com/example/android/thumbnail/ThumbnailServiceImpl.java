@@ -5,6 +5,7 @@ import com.example.android.attchedfile.FileService;
 import com.example.android.attchedfile.vo.FileBytes;
 import com.example.android.attchedfile.vo.FileSearch;
 import com.example.android.models.ThumbnailImage;
+import com.example.android.utils.FileProperties;
 import com.example.android.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,14 @@ public class ThumbnailServiceImpl implements ThumbnailService
 
     private FileService fileService;
 
+    private FileProperties properties;
 
-    public ThumbnailServiceImpl(ThumbnailRepository repository, FileService fileService)
+
+    public ThumbnailServiceImpl(ThumbnailRepository repository, FileService fileService, FileProperties properties)
     {
         this.repository = repository;
         this.fileService = fileService;
+        this.properties = properties;
     }
 
 
@@ -54,7 +58,7 @@ public class ThumbnailServiceImpl implements ThumbnailService
 
         ThumbnailImage resThumb = repository.save(thumbnailImage);
 
-        FileUtils.thumbnailWrite(Constant.THUMBNAIL_DIR, fileBytes, thumbnailImage);
+        FileUtils.thumbnailWrite(properties.getThumbnailDir(), fileBytes, thumbnailImage);
         log.debug("Thumbnail image write complete: {}", thumbnailImage.getOriginalFile());
 
         return resThumb;
@@ -66,7 +70,7 @@ public class ThumbnailServiceImpl implements ThumbnailService
         Optional<ThumbnailImage> res = repository.findById(id);
         ThumbnailImage thumbnailImage = res.orElseThrow(() -> new RuntimeException("Not found."));
         repository.deleteById(id);
-        FileUtils.delete(Constant.THUMBNAIL_DIR, thumbnailImage);
+        FileUtils.delete(properties.getThumbnailDir(), thumbnailImage);
     }
 
 
@@ -81,7 +85,7 @@ public class ThumbnailServiceImpl implements ThumbnailService
         Optional<ThumbnailImage> res = repository.findById(id);
         ThumbnailImage img = res.orElseThrow(() -> new RuntimeException("Not found."));
 
-        byte[] fileBytesArray = FileUtils.fileRead(Constant.THUMBNAIL_DIR, img);
+        byte[] fileBytesArray = FileUtils.fileRead(properties.getThumbnailDir(), img);
 
         FileBytes fileBytes = FileUtils.toFileBytes(img, img.getId());
         fileBytes.setBytes(fileBytesArray);
